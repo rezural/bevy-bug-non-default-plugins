@@ -1,7 +1,15 @@
 use bevy::{
+    app::PluginGroupBuilder,
+    asset::AssetPlugin,
+    core::CorePlugin,
+    diagnostic::DiagnosticsPlugin,
+    input::InputPlugin,
+    // log::LogPlugin,
     prelude::*,
     render::wireframe::{Wireframe, WireframeConfig, WireframePlugin},
+    scene::ScenePlugin,
     wgpu::{WgpuFeature, WgpuFeatures, WgpuOptions},
+    window::WindowPlugin,
 };
 
 fn main() {
@@ -14,7 +22,7 @@ fn main() {
             },
             ..Default::default()
         })
-        .add_plugins(DefaultPlugins)
+        .add_plugins(TestDefaultPlugins)
         .add_plugin(WireframePlugin)
         .add_startup_system(setup)
         .run();
@@ -55,4 +63,49 @@ fn setup(
         transform: Transform::from_xyz(-2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
         ..Default::default()
     });
+}
+
+pub struct TestDefaultPlugins;
+
+impl PluginGroup for TestDefaultPlugins {
+    fn build(&mut self, group: &mut PluginGroupBuilder) {
+        // group.add(LogPlugin::default());
+        group.add(CorePlugin::default());
+        group.add(TransformPlugin::default());
+        group.add(DiagnosticsPlugin::default());
+        group.add(InputPlugin::default());
+        group.add(WindowPlugin::default());
+        group.add(AssetPlugin::default());
+        group.add(ScenePlugin::default());
+
+        #[cfg(feature = "bevy_render")]
+        group.add(RenderPlugin::default());
+
+        #[cfg(feature = "bevy_sprite")]
+        group.add(SpritePlugin::default());
+
+        #[cfg(feature = "bevy_pbr")]
+        group.add(PbrPlugin::default());
+
+        #[cfg(feature = "bevy_ui")]
+        group.add(UiPlugin::default());
+
+        #[cfg(feature = "bevy_text")]
+        group.add(TextPlugin::default());
+
+        #[cfg(feature = "bevy_audio")]
+        group.add(AudioPlugin::default());
+
+        #[cfg(feature = "bevy_gilrs")]
+        group.add(GilrsPlugin::default());
+
+        #[cfg(feature = "bevy_gltf")]
+        group.add(GltfPlugin::default());
+
+        #[cfg(feature = "bevy_winit")]
+        group.add(WinitPlugin::default());
+
+        #[cfg(feature = "bevy_wgpu")]
+        group.add(WgpuPlugin::default());
+    }
 }
